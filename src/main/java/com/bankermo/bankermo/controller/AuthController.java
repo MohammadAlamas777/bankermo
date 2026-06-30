@@ -1,5 +1,6 @@
 package com.bankermo.bankermo.controller;
 
+import com.bankermo.bankermo.dto.LoginRequest;
 import com.bankermo.bankermo.dto.RegisterRequest;
 import com.bankermo.bankermo.entity.User;
 import com.bankermo.bankermo.service.UserService;
@@ -25,4 +26,10 @@ public class AuthController {
                 .status(HttpStatus.CREATED)
                 .body("User registered successfully with id: " + user.getId());
     }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        String token = userService.login(request);
+        return ResponseEntity.ok(new LoginResponse(token));
+    }
+    public record LoginResponse(String token) {}
 }
