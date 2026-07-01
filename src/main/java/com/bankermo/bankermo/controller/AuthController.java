@@ -32,4 +32,9 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token));
     }
     public record LoginResponse(String token) {}
+
+    @GetMapping("/me")
+    public ResponseEntity<String> me(org.springframework.security.core.Authentication authentication) {
+        return ResponseEntity.ok("You are authenticated as: " + authentication.getName());
+    }
 }
