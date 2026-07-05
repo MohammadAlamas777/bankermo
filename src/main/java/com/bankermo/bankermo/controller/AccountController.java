@@ -1,7 +1,9 @@
 package com.bankermo.bankermo.controller;
 
+import com.bankermo.bankermo.dto.AmountRequest;
 import com.bankermo.bankermo.entity.Account;
 import com.bankermo.bankermo.service.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,5 +31,23 @@ public class AccountController {
     public ResponseEntity<List<Account>> getMyAccounts(Authentication authentication) {
         List<Account> accounts = accountService.getMyAccounts(authentication.getName());
         return ResponseEntity.ok(accounts);
+    }
+
+    @PostMapping("/{accountId}/deposit")
+    public ResponseEntity<Account> deposit(
+            Authentication authentication,
+            @PathVariable Long accountId,
+            @Valid @RequestBody AmountRequest request) {
+        Account account = accountService.deposit(authentication.getName(), accountId, request.amount());
+        return ResponseEntity.ok(account);
+    }
+
+    @PostMapping("/{accountId}/withdraw")
+    public ResponseEntity<Account> withdraw(
+            Authentication authentication,
+            @PathVariable Long accountId,
+            @Valid @RequestBody AmountRequest request) {
+        Account account = accountService.withdraw(authentication.getName(), accountId, request.amount());
+        return ResponseEntity.ok(account);
     }
 }

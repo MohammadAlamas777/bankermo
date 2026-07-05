@@ -7,6 +7,7 @@ import com.bankermo.bankermo.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
@@ -36,6 +37,33 @@ public class AccountService {
         User owner = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return accountRepository.findByOwnerId(owner.getId());
+    }
+
+    public Account deposit(String userEmail, Long accountId, BigDecimal amount) {
+        Account account = getOwnedAccount(userEmail, accountId);
+        account.setBalance(account.getBalance().add(amount));
+        return accountRepository.save(account);
+    }
+
+    public Account withdraw(String userEmail, Long accountId, BigDecimal amount) {
+        Account account = getOwnedAccount(userEmail, accountId);
+
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+
+        account.setBalance(account.getBalance().subtract(amount));
+        return accountRepository.save(account);
+    }
+
+    private Account getOwnedAccount(String userEmail, Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+        if (!account.getOwner().getEmail().equals(userEmail)) {
+            throw new IllegalArgumentException("Account does not belong to you");
+        }
+        return account;
     }
 
     private String generateAccountNumber() {
