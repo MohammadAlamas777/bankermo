@@ -73,4 +73,21 @@ public class AccountService {
         } while (accountRepository.existsByAccountNumber(number));
         return number;
     }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void transfer(String userEmail, Long fromAccountId, Long toAccountId, BigDecimal amount) {
+        Account from = getOwnedAccount(userEmail, fromAccountId);
+        Account to = accountRepository.findById(toAccountId)
+                .orElseThrow(() -> new IllegalArgumentException("Destination account not found"));
+
+        if (from.getBalance().compareTo(amount) < 0) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+
+        accountRepository.save(from);
+        accountRepository.save(to);
+    }
 }

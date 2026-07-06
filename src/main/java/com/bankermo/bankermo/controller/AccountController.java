@@ -1,6 +1,7 @@
 package com.bankermo.bankermo.controller;
 
 import com.bankermo.bankermo.dto.AmountRequest;
+import com.bankermo.bankermo.dto.TransferRequest;
 import com.bankermo.bankermo.entity.Account;
 import com.bankermo.bankermo.service.AccountService;
 import jakarta.validation.Valid;
@@ -49,5 +50,18 @@ public class AccountController {
             @Valid @RequestBody AmountRequest request) {
         Account account = accountService.withdraw(authentication.getName(), accountId, request.amount());
         return ResponseEntity.ok(account);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transfer(
+            Authentication authentication,
+            @Valid @RequestBody TransferRequest request) {
+        accountService.transfer(
+                authentication.getName(),
+                request.fromAccountId(),
+                request.toAccountId(),
+                request.amount()
+        );
+        return ResponseEntity.ok("Transfer successful");
     }
 }
