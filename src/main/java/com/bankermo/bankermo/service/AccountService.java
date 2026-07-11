@@ -113,4 +113,8 @@ public class AccountService {
         } while (accountRepository.existsByAccountNumber(number));
         return number;
     }
+    public List<Transaction> getTransactions(String userEmail, Long accountId) {
+        getOwnedAccount(userEmail, accountId);
+        return transactionRepository.findByAccountIdOrderByCreatedAtDesc(accountId);
+    }
 }
