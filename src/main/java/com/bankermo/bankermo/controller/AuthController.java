@@ -7,6 +7,7 @@ import com.bankermo.bankermo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,15 +27,19 @@ public class AuthController {
                 .status(HttpStatus.CREATED)
                 .body("User registered successfully with id: " + user.getId());
     }
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         String token = userService.login(request);
         return ResponseEntity.ok(new LoginResponse(token));
     }
+
     public record LoginResponse(String token) {}
 
     @GetMapping("/me")
-    public ResponseEntity<String> me(org.springframework.security.core.Authentication authentication) {
-        return ResponseEntity.ok("You are authenticated as: " + authentication.getName());
+    public ResponseEntity<UserProfileResponse> me(Authentication authentication) {
+        return ResponseEntity.ok(new UserProfileResponse(authentication.getName()));
     }
+
+    public record UserProfileResponse(String email) {}
 }
