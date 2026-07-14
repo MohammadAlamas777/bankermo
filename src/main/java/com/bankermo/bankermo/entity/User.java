@@ -22,6 +22,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private String passwordHash;
+
     @Column(nullable = false)
     private String passwordHash;
 
