@@ -18,4 +18,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserNotFound(UsernameNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidation(
+            org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                .findFirst()
+                .orElse("Validation error");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
 }
