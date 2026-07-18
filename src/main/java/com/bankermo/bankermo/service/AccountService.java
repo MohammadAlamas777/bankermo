@@ -83,7 +83,7 @@ public class AccountService {
                 amount, to.getBalance(), "Transfer from " + from.getAccountNumber());
     }
 
-    private Account getOwnedAccount(String userEmail, Long accountId) {
+    public Account getOwnedAccount(String userEmail, Long accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
         if (!account.getOwner().getEmail().equals(userEmail)) {

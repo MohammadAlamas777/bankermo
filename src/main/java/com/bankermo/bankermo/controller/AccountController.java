@@ -34,7 +34,14 @@ public class AccountController {
         List<Account> accounts = accountService.getMyAccounts(authentication.getName());
         return ResponseEntity.ok(accounts);
     }
-
+    @GetMapping("/{accountId}")
+    public ResponseEntity<Account> getAccount(
+            Authentication authentication,
+            @PathVariable Long accountId) {
+        Account account = accountService.getOwnedAccount(
+                authentication.getName(), accountId);
+        return ResponseEntity.ok(account);
+    }
     @PostMapping("/{accountId}/deposit")
     public ResponseEntity<Account> deposit(
             Authentication authentication,
