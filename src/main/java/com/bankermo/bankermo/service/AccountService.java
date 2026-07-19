@@ -9,10 +9,12 @@ import com.bankermo.bankermo.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
+
 
 @Service
 public class AccountService {
@@ -113,8 +115,10 @@ public class AccountService {
         } while (accountRepository.existsByAccountNumber(number));
         return number;
     }
-    public List<Transaction> getTransactions(String userEmail, Long accountId) {
+    public org.springframework.data.domain.Page<Transaction> getTransactions(
+            String userEmail, Long accountId, int page, int size) {
         getOwnedAccount(userEmail, accountId);
-        return transactionRepository.findByAccountIdOrderByCreatedAtDesc(accountId);
+        return transactionRepository.findByAccountIdOrderByCreatedAtDesc(
+                accountId, org.springframework.data.domain.PageRequest.of(page, size));
     }
 }

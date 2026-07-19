@@ -5,6 +5,7 @@ import com.bankermo.bankermo.dto.TransferRequest;
 import com.bankermo.bankermo.entity.Account;
 import com.bankermo.bankermo.service.AccountService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -72,12 +73,15 @@ public class AccountController {
         );
         return ResponseEntity.ok("Transfer successful");
     }
+
     @GetMapping("/{accountId}/transactions")
-    public ResponseEntity<List<Transaction>> getTransactions(
+    public ResponseEntity<Page<Transaction>> getTransactions(
             Authentication authentication,
-            @PathVariable Long accountId) {
-        List<Transaction> transactions = accountService.getTransactions(
-                authentication.getName(), accountId);
+            @PathVariable Long accountId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Transaction> transactions = accountService.getTransactions(
+                authentication.getName(), accountId, page, size);
         return ResponseEntity.ok(transactions);
     }
 }
